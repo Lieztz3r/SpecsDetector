@@ -1,61 +1,117 @@
 # SpecsDetector
 
-**Install the latest version:** [Download SpecsDetector](https://github.com/Lieztz3r/SpecsDetector/releases/latest)
+**Download the latest version:** [SpecsDetector releases](https://github.com/Lieztz3r/SpecsDetector/releases/latest)
 
-SpecsDetector checks your Android phone with measured evidence instead of guesses. It shows memory, temperature, battery and storage, keeps a light history, and runs repeatable tests: whether the phone loses performance when it heats up, and whether a change (battery saver, charger, airplane mode, closing apps, removing the case) really makes it faster or slower. When the data is not enough, it says so.
+| Platform | Download | Requires |
+|---|---|---|
+| Android | [SpecsDetector.apk](https://github.com/Lieztz3r/SpecsDetector/releases/latest/download/SpecsDetector.apk) | Android 8.0 or later |
+| Windows | [SpecsDetector-Windows-x64.zip](https://github.com/Lieztz3r/SpecsDetector/releases/latest/download/SpecsDetector-Windows-x64.zip) | Windows 10 or 11, 64-bit |
+| Linux | [SpecsDetector-Linux-x64.tar.gz](https://github.com/Lieztz3r/SpecsDetector/releases/latest/download/SpecsDetector-Linux-x64.tar.gz) | x86-64 with glibc 2.31+ (Ubuntu 20.04+, Debian 11+, Fedora 32+) |
 
-## Install
+SpecsDetector checks a phone or a computer with measured evidence instead of guesses. It shows what is happening, keeps a light history and runs repeatable tests that say whether a change really made things faster. When the data is not enough, it says "inconclusive" instead of guessing. No account, no ads, no analytics.
 
-1. On Android, download [SpecsDetector.apk](https://github.com/Lieztz3r/SpecsDetector/releases/latest/download/SpecsDetector.apk) and open it.
-2. If Android asks, allow your browser to install unknown apps.
-3. Tap **Install**.
+**Use only files attached to this official repository's releases.** `latest.json` lists the version, SHA-256 and size of every download so you can verify it.
 
-Requires Android 8.0 (Android 26) or later. No account, no ads, no analytics.
+## Android
 
-**Use only APKs attached to this official repository's releases.** APKs are signed with the project key; `latest.json` includes the app version and the SHA-256 of the APK so you can verify the download.
+1. On the phone, download [SpecsDetector.apk](https://github.com/Lieztz3r/SpecsDetector/releases/latest/download/SpecsDetector.apk) and open it.
+2. If Android asks, allow your browser to install unknown apps, then tap **Install**.
 
-## What it does
+- **Now:** memory (including Android's low-memory flag), thermal status and headroom, battery temperature, battery saver and storage, with rules over the last minute that separate what was measured from what it does not prove.
+- **History:** one sample every ~15 minutes, even with the app closed, summarised per day.
+- **Lab:** a 5-minute sustained-performance test and an A-B-A comparison of a change (battery saver, charger, airplane mode, closing apps) with a 95 % interval. You apply the change; when Android exposes it, the app verifies it.
+- **Verdict (indicative)** and full **device** specs.
 
-- **Now:** memory (including Android's low-memory flag and the kernel's MemAvailable), thermal status and headroom, battery temperature, battery saver, storage. Rules over the last minute separate what was measured from what it does not prove.
-- **History:** one sample every ~15 minutes, even with the app closed, summarised per day (low-memory time, thermal limiting, battery drain per hour).
-- **Lab:** a 5-minute sustained-performance test and an A-B-A comparison of a change, with a 95 % interval. The app never changes your settings; you apply the change and, when Android exposes it, the app verifies it.
-- **Verdict (indicative):** by default "don't buy" or "insufficient data". Phone prices from SoloTodo (Chile) only when you ask.
-- **Device:** full specs of the phone.
+The APK is signed with the project key.
+
+## Windows
+
+1. Download [SpecsDetector-Windows-x64.zip](https://github.com/Lieztz3r/SpecsDetector/releases/latest/download/SpecsDetector-Windows-x64.zip) and extract it anywhere. No installation needed.
+2. Open `SpecsDetector\SpecsDetector.exe`. The dashboard opens in your browser at `http://127.0.0.1:8765`. Close the SpecsDetector console window to quit.
+
+The executable is not commercially signed, so SmartScreen may show "Windows protected your PC". Check its SHA-256 against `latest.json`, then choose **More info → Run anyway**.
+
+## Linux
+
+```sh
+curl -LO https://github.com/Lieztz3r/SpecsDetector/releases/latest/download/SpecsDetector-Linux-x64.tar.gz
+tar -xzf SpecsDetector-Linux-x64.tar.gz
+./SpecsDetector/SpecsDetector            # opens the dashboard in your browser
+./SpecsDetector/crear-acceso.sh          # optional: adds it to the applications menu
+```
+
+Runs as a normal user; root is not needed. Without root, Linux does not expose memory modules and slots, so the app does not suggest RAM upgrades. User activity is read on X11 and GNOME; on other Wayland desktops it is reported as "no data".
+
+## What the computer app does
+
+- **Live:** CPU, memory, pages read from disk, disk latency, CPU run queue and processor performance, grouped by what processes are for (apps, browsers, development, services, system, background). Rules work over a 60-second window, use hysteresis and abstain when data is missing; a full swap or page file is not reported as a problem without measured paging.
+- **History:** friction minutes per hour over 7 days, capture gaps and episodes you save.
+- **Lab:** an AB/BA experiment with its own test task. The plan is fixed with a seed before measuring, you approve the exact processes, and the only action is to lower the priority of SpecsDetector's own test workers and restore it, verified after every block. The result comes with a paired 95 % interval and a dossier that can be recomputed on any computer. Real actions stay disabled until **Verify this computer** passes.
+- **Capacity (indicative):** real hardware inventory and an upgrade verdict that defaults to "don't buy" or "insufficient data". RAM prices from SoloTodo (Chile) only when you ask.
+- **Optional AI:** if [Ollama](https://ollama.com) runs on the same computer, a local model can explain evidence that was already calculated. Without it, a deterministic summary is shown.
 
 ## Privacy
 
-Measurements stay on the phone and are not included in Android backups. The only Internet request is to SoloTodo's public API, over HTTPS, and only when you tap the prices button. Read the [full privacy policy](PRIVACY.md).
+Measurements stay on the device. The computer app only listens on `127.0.0.1`, so no other device can connect, and it never touches processes it did not create. The only Internet request is to SoloTodo's public API over HTTPS, and only when you ask for prices. Read the [full privacy policy](PRIVACY.md).
 
-This repository distributes ready-to-install releases and end-user information; it does not contain the development source code.
+This repository distributes ready-to-use releases and end-user information; it does not contain the development source code.
 
 ---
 
 # SpecsDetector (español)
 
-**Instala la última versión:** [Descargar SpecsDetector](https://github.com/Lieztz3r/SpecsDetector/releases/latest)
+**Descarga la última versión:** [publicaciones de SpecsDetector](https://github.com/Lieztz3r/SpecsDetector/releases/latest)
 
-SpecsDetector revisa tu teléfono Android con evidencia medida en vez de suposiciones. Muestra memoria, temperatura, batería y almacenamiento, guarda un historial liviano y hace pruebas repetibles: si el teléfono pierde rendimiento cuando se calienta y si un cambio (ahorro de batería, cargador, modo avión, cerrar apps, quitar la funda) realmente lo hace más rápido o más lento. Cuando los datos no alcanzan, lo dice.
+| Plataforma | Descarga | Requisitos |
+|---|---|---|
+| Android | [SpecsDetector.apk](https://github.com/Lieztz3r/SpecsDetector/releases/latest/download/SpecsDetector.apk) | Android 8.0 o posterior |
+| Windows | [SpecsDetector-Windows-x64.zip](https://github.com/Lieztz3r/SpecsDetector/releases/latest/download/SpecsDetector-Windows-x64.zip) | Windows 10 u 11 de 64 bits |
+| Linux | [SpecsDetector-Linux-x64.tar.gz](https://github.com/Lieztz3r/SpecsDetector/releases/latest/download/SpecsDetector-Linux-x64.tar.gz) | x86-64 con glibc 2.31 o superior (Ubuntu 20.04+, Debian 11+, Fedora 32+) |
 
-## Instalación
+SpecsDetector revisa un teléfono o un computador con evidencia medida en vez de suposiciones. Muestra lo que está pasando, guarda un historial liviano y hace pruebas repetibles que dicen si un cambio realmente mejoró algo. Cuando los datos no alcanzan, responde "inconcluso" en vez de adivinar. Sin cuentas, sin anuncios y sin analítica.
 
-1. En tu teléfono Android, descarga [SpecsDetector.apk](https://github.com/Lieztz3r/SpecsDetector/releases/latest/download/SpecsDetector.apk) y ábrelo.
-2. Si Android lo solicita, permite instalar aplicaciones desde el navegador.
-3. Pulsa **Instalar**.
+**Usa únicamente archivos adjuntos a las publicaciones oficiales de este repositorio.** `latest.json` contiene la versión, el SHA-256 y el tamaño de cada descarga para que puedas verificarla.
 
-Requiere Android 8.0 (Android 26) o posterior. Sin cuentas, sin anuncios y sin analítica.
+## Android
 
-**Usa únicamente APK adjuntos a las publicaciones oficiales de este repositorio.** Los APK se firman con la clave del proyecto; `latest.json` contiene la versión y el SHA-256 del APK para que puedas verificar la descarga.
+1. En el teléfono, descarga [SpecsDetector.apk](https://github.com/Lieztz3r/SpecsDetector/releases/latest/download/SpecsDetector.apk) y ábrelo.
+2. Si Android lo solicita, permite instalar aplicaciones desde el navegador y pulsa **Instalar**.
 
-## Qué hace
+- **Ahora:** memoria (incluido el aviso de memoria baja de Android), estado y margen térmico, temperatura de la batería, ahorro de batería y almacenamiento. Las reglas sobre el último minuto separan lo medido de lo que no permite concluir.
+- **Historial:** una muestra cada ~15 minutos, aunque la app esté cerrada, resumida por día.
+- **Laboratorio:** prueba de rendimiento sostenido de 5 minutos y comparación A-B-A de un cambio (ahorro de batería, cargador, modo avión, cerrar apps) con intervalo del 95 %. Tú aplicas el cambio y, cuando Android lo permite, la app lo verifica.
+- **Veredicto (orientativo)** y especificaciones completas del **equipo**.
 
-- **Ahora:** memoria (incluido el aviso de memoria baja de Android y el MemAvailable del kernel), estado y margen térmico, temperatura de la batería, ahorro de batería y almacenamiento. Las reglas sobre el último minuto separan lo medido de lo que no permite concluir.
-- **Historial:** una muestra cada ~15 minutos, aunque la app esté cerrada, resumida por día (tiempo con memoria baja, limitación térmica y gasto de batería por hora).
-- **Laboratorio:** prueba de rendimiento sostenido de 5 minutos y comparación A-B-A de un cambio, con intervalo del 95 %. La app nunca cambia tus ajustes: tú aplicas el cambio y, cuando Android lo permite, la app lo verifica.
-- **Veredicto (orientativo):** por defecto "no compres" o "datos insuficientes". Precios de teléfonos en SoloTodo (Chile) solo si los pides.
-- **Equipo:** las especificaciones completas del teléfono.
+El APK se firma con la clave del proyecto.
+
+## Windows
+
+1. Descarga [SpecsDetector-Windows-x64.zip](https://github.com/Lieztz3r/SpecsDetector/releases/latest/download/SpecsDetector-Windows-x64.zip) y descomprímelo donde quieras. No necesita instalación.
+2. Abre `SpecsDetector\SpecsDetector.exe`. El panel se abre en el navegador en `http://127.0.0.1:8765`. Para salir, cierra la ventana de consola de SpecsDetector.
+
+El ejecutable no tiene firma comercial, así que SmartScreen puede mostrar "Windows protegió su PC". Compara su SHA-256 con `latest.json` y elige **Más información → Ejecutar de todas formas**.
+
+## Linux
+
+```sh
+curl -LO https://github.com/Lieztz3r/SpecsDetector/releases/latest/download/SpecsDetector-Linux-x64.tar.gz
+tar -xzf SpecsDetector-Linux-x64.tar.gz
+./SpecsDetector/SpecsDetector            # abre el panel en el navegador
+./SpecsDetector/crear-acceso.sh          # opcional: lo agrega al menú de aplicaciones
+```
+
+Funciona como usuario normal; no necesita root. Sin root, Linux no informa los módulos ni las ranuras de memoria, así que la app no sugiere ampliar la RAM. La actividad del usuario se lee en X11 y en GNOME; en otros escritorios Wayland aparece como "sin dato".
+
+## Qué hace la app de computador
+
+- **En vivo:** CPU, memoria, páginas leídas de disco, latencia de disco, cola de CPU y rendimiento del procesador, agrupados por función (aplicaciones, navegadores, desarrollo, servicios, sistema, segundo plano). Las reglas usan una ventana de 60 segundos con histéresis y se abstienen cuando faltan datos; un swap o archivo de paginación lleno no se informa como problema si no hay paginación medida.
+- **Historial:** minutos de fricción por hora durante 7 días, huecos de captura y episodios que guardes.
+- **Laboratorio:** experimento AB/BA con una tarea de prueba propia. El plan se fija con una semilla antes de medir, tú apruebas los procesos exactos y la única acción es bajar la prioridad de los workers de prueba de SpecsDetector y restaurarla, verificada después de cada bloque. El resultado trae un intervalo del 95 % emparejado y un expediente que se puede recalcular en cualquier equipo. Las acciones reales quedan bloqueadas hasta aprobar **Verificar este equipo**.
+- **Capacidad (orientativo):** inventario real del hardware y un veredicto de ampliación que por defecto es "no compres" o "datos insuficientes". Precios de RAM en SoloTodo (Chile) solo si los pides.
+- **IA opcional:** si [Ollama](https://ollama.com) corre en el mismo equipo, un modelo local puede explicar la evidencia ya calculada. Sin él, se muestra un resumen determinista.
 
 ## Privacidad
 
-Las mediciones se quedan en el teléfono y no se incluyen en los respaldos de Android. La única conexión a Internet es a la API pública de SoloTodo, por HTTPS, y solo cuando tocas el botón de precios. Consulta la [política de privacidad completa](PRIVACY.md).
+Las mediciones se quedan en el dispositivo. La app de computador solo escucha en `127.0.0.1`, así que ningún otro equipo puede conectarse, y nunca toca procesos que no haya creado. La única conexión a Internet es a la API pública de SoloTodo, por HTTPS, y solo cuando pides precios. Consulta la [política de privacidad completa](PRIVACY.md).
 
-Este repositorio distribuye versiones listas para instalar e información para usuarios; no contiene el código fuente de desarrollo.
+Este repositorio distribuye versiones listas para usar e información para usuarios; no contiene el código fuente de desarrollo.
